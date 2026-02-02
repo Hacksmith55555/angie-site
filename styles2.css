@@ -1,0 +1,104 @@
+:root{
+--secondary-bg-color: rgb(189, 21, 21);
+}
+
+*{
+    margin:0;
+}
+
+body{
+    background-image: linear-gradient(to top, rgb(104, 6, 6), rgb(0, 0, 0));
+}
+
+.header{
+    background-image: linear-gradient(to bottom, rgb(0, 0, 0) 35%, var(--secondary-bg-color));
+    padding-top: 200px;
+    padding-bottom: 200px;
+    text-align: center;
+    font-size: 85%;
+    font-weight: bold;
+}
+
+.header h1{
+    color: white;
+    font-size: 250%;
+    padding: 20px;
+}
+
+.nav{
+    padding-bottom: 5px;
+    background-image: linear-gradient(to bottom,var(--secondary-bg-color), rgb(0, 0, 0));
+    overflow: hidden;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 2%;
+}
+
+.nav a{
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+    padding: 14px 16px;
+}
+
+h2{
+    text-align: center;
+    padding: 10px;
+}
+
+.intro p{
+    color: white;
+    text-align: center;
+    padding: 10px;
+    font-size: 25px;
+    margin-bottom: 30px;
+}
+
+.buttons{
+    text-align: center;
+}
+
+img[src="Photos/cat_Bat_Cute.jpg"]{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    object-fit: cover;
+    object-position: top;
+    width: auto;
+    height:400px;
+}
+
+img[src="Photos/cat_Witch_Hat.jpg"]{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    object-fit: cover;
+    object-position: top;
+    width: auto;
+    height:400px;
+
+
+}
+
+.Angiew {
+    display: flex;              /* enable flexbox */
+    justify-content: center;    /* center horizontally */
+    align-items: center;        /* center vertically */
+    height: 100vh;              /* full viewport height */
+    background-color: black; /* keeps page from scrolling */
+}
+
+.Angiew img {
+    
+    max-height: 100%;
+    max-width: 100%; /* prevents image from overflowing container */
+    height: auto;
+    width: auto;   /* keeps height fixed */
+}
+
+.buttons button{
+    background-color: rgba(7, 155, 241, 0);
+    border: none;
+} 
+    

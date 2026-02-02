@@ -1,0 +1,102 @@
+:root{
+--secondary-bg-color: rgb(130, 19, 19);
+}
+
+body{
+  background-image: linear-gradient(black, rgb(173, 30, 30));
+  padding-bottom: 10%;
+}
+
+.nav{
+    position: fixed; /* Fixes the navbar to the viewport */
+    top: 0; /* Positions it at the very top */
+    left: 0; /* Positions it at the very left */
+    width: 100%; /* Makes it span the full width of the viewport */
+    padding: 10px 0;
+    z-index: 1000;
+    padding-bottom: 5px;
+    background-image: linear-gradient(to bottom,var(--secondary-bg-color), rgb(30, 2, 2));
+    overflow: hidden;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 2%;
+}
+
+.nav a{
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+    padding: 14px 16px;
+}
+
+.calendar {
+  padding-top: 120px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.day {
+  background: #d0b632;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.day.locked {
+  background: #888;
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Hidden content */
+.content {
+  display: none;
+  margin-top: 10px;
+}
+
+.content img {
+  max-width: 100%;
+  border-radius: 5px;
+}
+
+.day.open .content {
+  display: block;
+}
+
+/* ------------------------------
+   FULLSCREEN IMAGE VIEWER
+   ------------------------------ */
+#img-viewer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+#img-viewer img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 10px;
+  box-shadow: 0 0 20px black;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+#img-viewer img:hover {
+  transform: scale(1.03);
+}
