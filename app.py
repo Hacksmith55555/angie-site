@@ -193,16 +193,23 @@ def memories():
 @app.post("/api/memories")
 @login_required
 def create_memory():
-    return upsert_memory(None)
+    data = request.get_json(silent=True) or {}
+
+    requested_id = str(data.get("id", "")).strip()
+
+    return upsert_memory(
+        requested_id or None,
+        create=True
+    )
 
 
 @app.put("/api/memories/<memory_id>")
 @login_required
 def update_memory(memory_id):
-    return upsert_memory(memory_id)
+    return upsert_memory(memory_id, create=False)
 
 
-def upsert_memory(memory_id):
+def upsert_memory(memory_id, create=False):
     data = request.get_json(silent=True) or {}
 
     title = str(data.get("title", "")).strip()
@@ -219,12 +226,11 @@ def upsert_memory(memory_id):
 
     photo = ""
     old_photo = ""
+    existing = False
 
     with db_conn() as db:
 
-        existing = False
-
-        if memory_id:
+        if memory_id and not create:
             old = db.execute(
                 "SELECT * FROM memories WHERE id = ?",
                 (memory_id,)
@@ -238,6 +244,18 @@ def upsert_memory(memory_id):
 
             existing = True
             old_photo = old["photo"] or ""
+
+        elif memory_id and create:
+            already = db.execute(
+                "SELECT id FROM memories WHERE id = ?",
+                (memory_id,)
+            ).fetchone()
+
+            if already:
+                return jsonify({
+                    "ok": False,
+                    "error": "already_exists"
+                }), 409
 
         else:
             memory_id = "x" + uuid.uuid4().hex
@@ -259,7 +277,7 @@ def upsert_memory(memory_id):
         else:
             photo = old_photo
 
-        if memory_id and old_photo and photo != old_photo:
+        if existing and old_photo and photo != old_photo:
             delete_photo(old_photo)
 
         if existing:
