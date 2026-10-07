@@ -1,24 +1,63 @@
-# October, After Dark
+# October, After Dark — Flask + Render persistent storage
 
-A small Halloween-themed site hosted on GitHub Pages.
+This version keeps the existing October, After Dark frontend and replaces the old Claude/shared-storage code with a Flask backend.
 
-## How memories work now
+## What is stored where
 
-Claude's shared database has been removed. Memories are stored in:
+- GitHub: source code only.
+- Render Web Service: runs Flask.
+- Render Persistent Disk (`/var/data`): stores `memories.db` and uploaded photos.
+- Browser localStorage: device-only checklists, games, and other existing frontend state.
 
-- `data/memories.json` for the story data
-- `data/images/` for uploaded photos
+The uploaded photos are **not** committed to GitHub and are not stored in Render's temporary application filesystem.
 
-The public site reads those files from the GitHub repository. When you edit a memory, the site uses the GitHub REST API to commit the changed file(s) to your repository.
+## Local development
 
-### GitHub setup
+```bash
+pip install -r requirements.txt
+python app.py
+```
 
-The site automatically detects a GitHub Pages repository when it is opened from a `*.github.io` address. If you use a custom domain or test with a local file, enter the repository as `owner/repository` the first time you edit a memory.
+Local data defaults to `./data/`. Set `DATA_DIR` if you want another location.
 
-To edit memories, the site asks for a **fine-grained GitHub personal access token**. Give the token access only to this repository and only the **Contents: Read and write** permission. The token is kept in `sessionStorage`, so it is cleared when the browser session is ended.
+## Render deployment
 
-Do **not** put a GitHub token in the source code or commit one to GitHub.
+Use a **paid Render Web Service** because persistent disks are not available on Render Free Web Services.
 
-## Build
+Recommended smallest setup:
 
-`python3 build.py` creates `dist/spooky-october.html` with the CSS and JavaScript inlined. The memory data and photos intentionally stay outside that file because GitHub needs to update them separately.
+- Web Service: Starter / smallest paid instance
+- Persistent disk: 1 GB to start
+- Mount path: `/var/data`
+
+Environment variables:
+
+```text
+DATA_DIR=/var/data
+FLASK_SECRET_KEY=<long-random-secret>
+SITE_PASSWORD=<your-private-password>
+```
+
+Build command:
+
+```text
+pip install -r requirements.txt
+```
+
+Start command:
+
+```text
+gunicorn app:app
+```
+
+## Memory/photo access
+
+The public site can load memory metadata, but uploaded photos are served only after the Flask session has been unlocked with `SITE_PASSWORD`. The same password is used for adding, editing, and removing memories.
+
+Photos are stored outside `static/` on the persistent disk, so they are not ordinary public static files.
+
+## Important
+
+Only files written under the persistent disk mount path survive Render deploys/restarts. Keep `DATA_DIR=/var/data` when the disk is mounted there.
+
+The persistent disk is storage, not a backup system. For important photos, keep a separate backup as well.

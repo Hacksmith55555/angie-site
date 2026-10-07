@@ -18,7 +18,7 @@ function paintList(){
   $('bar').style.width = (n / things.length * 100) + '%';
 }
 function refresh(){
-  $('jnote').textContent = '';
+  $('jnote').textContent = isUnlocked() ? '' : 'Unlock the story to view photos and add or edit memories.';
   paintList(); renderPath();
 }
 
@@ -65,7 +65,7 @@ function drawRoad(box, stops){
     b.className = 'stop' + (m ? ' done' : '') + (m && !m.photo ? ' nophoto' : '') + (st.mystery ? ' mys' : '');
     b.style.left = (pt.x-32)+'px'; b.style.top = (pt.y-32)+'px';
     b.setAttribute('aria-label', st.mystery ? 'Mystery stop' : st.title + (m ? ', done' : ', not done yet'));
-    if(m && m.photo) b.style.backgroundImage = 'url("' + m.photo + '")'; else b.textContent = st.mystery ? '?' : (m ? '\u2713' : (i+1));
+    if(m && m.photo && isUnlocked()) b.style.backgroundImage = 'url("' + m.photo + '")'; else b.textContent = st.mystery ? '?' : (m ? '\u2713' : (i+1));
     b.onclick = function(){
       if(st.mystery) ask('Mystery stop', st.sub + ' This one stays hidden until ' + st.chapter + '.', false, 'OK');
       else openMem(st.id, st.title, st.sub, !!st.extra);

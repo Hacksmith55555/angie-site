@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>October, After Dark</title>
 <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
 <nav aria-label="Pages">
@@ -118,13 +118,13 @@
 </dialog>
 <footer>Made with love, a little fog, and way too many pumpkins.</footer>
 
-<script src="js/core.js"></script>
-<script src="js/activities.js"></script>
-<script src="js/lock.js"></script>
-<script src="js/journey.js"></script>
-<script src="js/memories.js"></script>
-<script src="js/couch.js"></script>
-<script src="js/coupons.js"></script>
-<script src="js/games.js"></script>
+<script src="{{ url_for('static', filename='js/core.js') }}"></script>
+<script src="{{ url_for('static', filename='js/activities.js') }}"></script>
+<script src="{{ url_for('static', filename='js/lock.js') }}"></script>
+<script src="{{ url_for('static', filename='js/journey.js') }}"></script>
+<script src="{{ url_for('static', filename='js/memories.js') }}"></script>
+<script src="{{ url_for('static', filename='js/couch.js') }}"></script>
+<script src="{{ url_for('static', filename='js/coupons.js') }}"></script>
+<script src="{{ url_for('static', filename='js/games.js') }}"></script>
 </body>
 </html>
