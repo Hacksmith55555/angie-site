@@ -1,36 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>❤️The Angie Site❤️</title>
-    <link rel="stylesheet" href="styles2.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>October, After Dark</title>
+<link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <script src="/Scripts/snow_Flakes.js"></script>
+<nav aria-label="Pages">
+<button data-p="home" aria-current="page">Home</button>
+<button data-p="journey">Our Journey</button>
+<button data-p="todo">Things to Do</button>
+<button data-p="couch">Couch Time</button>
+<button data-p="coupons">Coupons</button>
+<button data-p="games">Games</button>
+</nav>
+<main>
 
-    <div class ="header">
-        <h1>❤️Angie The Bangie's❤️ Page</h1>
-    </div>
+<section id="home" class="on">
+<div class="hero">
+<button class="moon" id="moon" aria-label="Poke the moon"></button>
+<h1 id="title">Happy October, my love</h1>
+<p class="lede">Your favorite season, and I made it a whole website. Poke the moon if you dare.</p>
+<button class="btn" id="pickBtn">Pick our next adventure</button>
+<p class="pick" id="pick" aria-live="polite"></p>
+</div>
+</section>
 
-    <div class = "nav">
-        <a href="../index.html">Home</a>
-        <a href="sub_Pages/valentines_letter.html">Valentines Letter</a>
-        <a href="sub_Pages/valentines/will_you_be_my_valentine/index.html">Question??</a>
-        <a href="sub_Pages/coupons.html">Coupons</a>
-    </div>
+<section id="journey">
+<h2>Our Journey</h2>
+<p class="sub">Every adventure lights up a stop on the road. Tap a stop to add the date and a photo.</p>
+<p class="sub" id="jnote"></p>
+<div id="earlier"></div>
+<div class="chap" data-theme="oct">
+<div class="flag">October 2026 &middot; Spooky</div>
+<div class="path" id="path"></div>
+<p class="tc"><button class="btn" id="addMem">Add a memory</button></p>
+</div>
+<div class="chap" data-theme="nov">
+<div class="flag locked">November 2026 &middot; mystery</div>
+<p class="sub tc">The road keeps going. We will find out together.</p>
+<div class="path" id="path-nov"></div>
+</div>
+<div class="chap" data-theme="winter">
+<div class="flag locked">Winter 2026 &middot; mystery</div>
+<p class="sub tc">Something is waiting past the first snow.</p>
+<div class="path" id="path-win"></div>
+</div>
+</section>
 
-    <h2>Valentines Update</h2>
+<section id="todo">
+<h2>Things to Do</h2>
+<p class="sub">Tick them off as we go. Your progress stays on this device.</p>
+<div class="prog"><i id="bar"></i></div>
+<ul class="list" id="list"></ul>
+</section>
 
-    <div class="intro">
+<section id="couch">
+<h2>Couch Time</h2>
+<p class="sub">Blankets, snacks, and a screen. Pick one and press play.</p>
+<h3 class="sub2">Movies to watch</h3>
+<div class="prog"><i id="bar-m"></i></div>
+<button class="btn alt" id="pickM">Pick tonight's movie</button>
+<p class="pick" id="pm" aria-live="polite"></p>
+<ul class="list" id="list-m"></ul>
+<h3 class="sub2">Video games to play together</h3>
+<div class="prog"><i id="bar-g"></i></div>
+<button class="btn alt" id="pickG">Pick tonight's game</button>
+<p class="pick" id="pg" aria-live="polite"></p>
+<ul class="list" id="list-g"></ul>
+</section>
 
-        <p>EWWWWWWW!!!!! What the heck??! Where are all of these hearts coming from?! NO NO NO NO NOOOOOO!!!!!
-            IT'S THE EWY GOOWY TIME!!!!!!!
-        </p>
-        <p></p>
-    </div>
+<section id="coupons">
+<h2>Coupons</h2>
+<p class="sub">Each one is good for one use. Tap Redeem when you want to cash it in.</p>
+<div class="coupons" id="coupons"></div>
+</section>
 
+<section id="games">
+<h2>Games</h2>
+<p class="sub">Beat your own high score.</p>
 
-    
+<div class="game">
+<h3>Ghost Catch</h3>
+<p class="sub">Tap 👻 for 1 point and 🎃 for 3. Don't touch the 🕷️, it costs 2.</p>
+<div class="hud"><span>Score <strong id="gs">0</strong></span><span>Time <strong id="gt">30</strong></span><span>Best <strong id="gb">0</strong></span><button class="btn alt" id="gstart">Start</button></div>
+<div class="holes" id="holes"></div>
+<p class="msg" id="gmsg"></p>
+</div>
+
+<div class="game">
+<h3>Midnight Match</h3>
+<p class="sub">Find all eight pairs in as few moves as you can.</p>
+<div class="hud"><span>Moves <strong id="mm">0</strong></span><span>Best <strong id="mb">-</strong></span><button class="btn alt" id="mstart">New game</button></div>
+<div class="cards" id="cards"></div>
+<p class="msg" id="mmsg"></p>
+</div>
+</section>
+
+</main>
+<dialog id="dlg">
+<h3 id="dTitle"></h3>
+<p class="sub" id="dSub"></p>
+<input id="dName" type="text" placeholder="What did we do?" maxlength="60" aria-label="What did we do?">
+<label class="fld">Date <input id="dDate" type="date"></label>
+<label class="fld" id="fFile">Photo <input id="dFile" type="file" accept="image/*"></label>
+<img id="dImg" alt="" hidden>
+<p class="msg" id="dMsg"></p>
+<div class="row"><button class="btn" id="dEdit">Edit</button><button class="btn" id="dSave">Save</button><button class="btn alt" id="dRemove">Remove</button><button class="btn alt" id="dClose">Close</button></div>
+</dialog>
+<dialog id="askDlg">
+<h3 id="aT"></h3>
+<p class="sub" id="aP"></p>
+<input id="aIn" type="password" autocomplete="off" aria-label="Password">
+<div class="row"><button class="btn" id="aOk">OK</button><button class="btn alt" id="aNo">Cancel</button></div>
+</dialog>
+<footer>Made with love, a little fog, and way too many pumpkins.</footer>
+
+<script src="js/core.js"></script>
+<script src="js/activities.js"></script>
+<script src="js/lock.js"></script>
+<script src="js/journey.js"></script>
+<script src="js/memories.js"></script>
+<script src="js/couch.js"></script>
+<script src="js/coupons.js"></script>
+<script src="js/games.js"></script>
 </body>
 </html>

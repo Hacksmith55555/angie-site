@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>October, After Dark</title>
+<link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* Colors, fonts and page basics */
+:root{--glow:#3a2a66;--road:#33265c;--navbg:rgba(23,16,43,.92);--ink:#17102b;--ink2:#241a40;--moon:#ede6d3;--candle:#ffb547;--fog:#8f80b3;--cherry:#d6405f;
+--head:'Pirata One','Georgia',serif;--body:'Spectral','Georgia',serif;color-scheme:dark;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--ink);color:var(--moon);font-family:var(--body);font-size:18px;line-height:1.6;min-height:100vh;
+background-image:radial-gradient(ellipse at 50% -10%,var(--glow) 0,transparent 60%);transition:background-color .6s}
+/* Top navigation */
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;gap:4px;justify-content:center;flex-wrap:wrap;padding:10px;background:var(--navbg);border-bottom:1px solid var(--ink2)}
+nav button{font:inherit;font-family:var(--head);font-size:1.25rem;color:var(--fog);background:none;border:0;padding:6px 16px;border-radius:999px;cursor:pointer}
+nav button[aria-current=page]{color:var(--ink);background:var(--candle)}
+button:focus-visible{outline:2px solid var(--candle);outline-offset:2px}
+main{max-width:760px;margin:0 auto;padding:24px 20px 80px}
+section{display:none}section.on{display:block}
+h1,h2,h3{font-family:var(--head);font-weight:400;line-height:1.05;margin:0}
+h1{font-size:clamp(3.2rem,13vw,6rem);text-align:center;color:var(--candle);text-shadow:0 0 28px rgba(255,181,71,.35)}
+h2{font-size:2.4rem;margin-bottom:6px}
+.sub{color:var(--fog);margin:0 0 22px}
+/* Home page */
+.hero{text-align:center;padding:20px 0 10px;position:relative}
+.moon{width:min(70vw,300px);aspect-ratio:1;margin:0 auto 26px;border-radius:50%;cursor:pointer;border:0;display:block;
+background:radial-gradient(circle at 35% 35%,#fffbe8,#ede6d3 55%,#c9bfa0);box-shadow:0 0 90px 20px rgba(255,181,71,.25)}
+.moon:hover{box-shadow:0 0 110px 30px rgba(255,181,71,.38)}
+.lede{max-width:34ch;margin:18px auto;font-style:italic;font-size:1.2rem}
+.btn{font:inherit;font-family:var(--head);font-size:1.4rem;background:var(--candle);color:var(--ink);border:0;border-radius:10px;padding:8px 22px;cursor:pointer}
+.btn.alt{background:none;color:var(--candle);border:2px solid var(--candle)}
+.pick{margin-top:22px;min-height:3.5em;font-size:1.35rem;color:var(--candle)}
+.bat{position:fixed;left:-60px;font-size:2rem;z-index:9;pointer-events:none;animation:fly 5s linear forwards}
+@keyframes fly{to{transform:translate(calc(100vw + 120px),-120px) rotate(12deg)}}
+/* Checklists and progress bars */
+.list{list-style:none;padding:0;margin:0}
+.list li{border-bottom:1px solid var(--ink2)}
+.list label{display:flex;gap:14px;align-items:flex-start;padding:12px 4px;cursor:pointer}
+.list input{width:22px;height:22px;margin-top:5px;accent-color:var(--candle);flex:none}
+.list input:checked+span{text-decoration:line-through;color:var(--fog)}
+.list b{display:block;font-weight:600}
+.list small{color:var(--fog);font-size:.95rem}
+.prog{height:8px;background:var(--ink2);border-radius:9px;overflow:hidden;margin:0 0 18px}
+.prog i{display:block;height:100%;width:0;background:var(--candle);transition:width .3s}
+/* Games */
+.game{background:var(--ink2);border-radius:14px;padding:18px;margin-bottom:28px}
+.hud{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:8px;flex-wrap:wrap}
+.hud span{color:var(--fog)}.hud strong{color:var(--moon)}
+.holes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.hole{aspect-ratio:1;border-radius:50%;border:0;background:radial-gradient(circle at 50% 70%,#0c0719,#1c1333);font-size:clamp(2rem,10vw,3.4rem);cursor:pointer;color:inherit}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.card{aspect-ratio:1;border:0;border-radius:12px;font-size:clamp(1.8rem,9vw,3rem);cursor:pointer;background:#33265c;color:transparent;transition:transform .2s}
+.card.up{background:var(--moon);color:inherit}.card.done{background:var(--candle);color:inherit}
+.msg{min-height:1.6em;color:var(--candle);margin:10px 0 0}
+.sub2{margin:28px 0 8px}
+/* Coupons */
+.coupons{display:grid;gap:16px}
+.coupon{position:relative;border:2px dashed var(--candle);border-radius:14px;padding:18px 18px 16px;background:var(--ink2);overflow:hidden}
+.coupon img{display:block;width:100%;height:auto;border-radius:8px;margin-bottom:12px}
+.coupon h3{font-size:1.9rem;color:var(--candle)}
+.coupon p{margin:4px 0 12px;color:var(--moon)}
+.coupon.used{opacity:.55}
+.coupon.used::after{content:'REDEEMED';position:absolute;top:42%;left:50%;transform:translate(-50%,-50%) rotate(-12deg);font-family:var(--head);font-size:2.6rem;color:var(--cherry);border:4px solid var(--cherry);padding:2px 14px;border-radius:8px}
+.coupon button:disabled{background:var(--fog);cursor:default}
+/* Our Journey road */
+.flag{text-align:center;font-family:var(--head);font-size:1.5rem;color:var(--ink);background:var(--candle);border-radius:999px;padding:4px 18px;width:max-content;max-width:100%;margin:16px auto}
+.flag.locked{background:none;color:var(--fog);border:2px dashed var(--fog)}
+#earlier a{display:block;text-align:center;color:var(--candle);margin-bottom:6px}
+.path{position:relative;margin:0 auto}
+.path svg{position:absolute;inset:0;pointer-events:none}
+.stop{position:absolute;width:64px;height:64px;border-radius:50%;border:3px solid var(--fog);background:var(--ink2) center/cover no-repeat;color:var(--fog);font-family:var(--head);font-size:1.5rem;cursor:pointer;padding:0}
+.stop.done{border-color:var(--candle);box-shadow:0 0 22px rgba(255,181,71,.55);color:var(--candle)}
+.stop.nophoto.done{background-color:#4a3410}
+.slab{position:absolute;font-size:.95rem;line-height:1.25;pointer-events:none}
+.slab b{display:block;font-weight:600}
+.slab small{color:var(--candle)}
+.slab.dim{color:var(--fog)}
+/* Pop-up dialogs */
+dialog{background:var(--ink2);color:var(--moon);border:2px solid var(--candle);border-radius:14px;width:min(92vw,440px);padding:20px;font-family:var(--body)}
+dialog::backdrop{background:rgba(5,2,15,.75)}
+dialog input[type=text],dialog input[type=date],dialog input[type=password]{font:inherit;color:var(--moon);background:var(--ink);border:1px solid var(--fog);border-radius:8px;padding:8px 10px;width:100%}
+dialog input[type=file]{display:block;margin-top:6px;color:var(--fog);max-width:100%}
+.fld{display:block;margin-top:12px;color:var(--fog)}
+.fld input[type=date]{margin-top:6px}
+#dImg{width:100%;max-height:260px;object-fit:cover;border-radius:10px;margin-top:12px}
+#dName{margin-top:4px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+/* Journey chapters and their color themes */
+.chap{color:var(--moon);padding:26px 0 18px}
+.tc{text-align:center}
+[data-theme=nov]{--ink:#2b1812;--ink2:#41261c;--moon:#f3e6d6;--candle:#e8963c;--fog:#b6917c;--glow:#7a4224;--road:#5a3626;--navbg:rgba(43,24,18,.92)}
+[data-theme=winter]{--ink:#0e1d33;--ink2:#1a3150;--moon:#e8f3ff;--candle:#8fd3ff;--fog:#7fa3c9;--glow:#2a5584;--road:#2c4d77;--navbg:rgba(14,29,51,.92)}
+.stop.mys{border-style:dashed;background:var(--ink2)}
+footer{text-align:center;color:var(--fog);padding:30px 20px;font-style:italic}
+@media (prefers-reduced-motion:reduce){.bat{animation-duration:.01s}.prog i,.card{transition:none}}
+</style>
+</head>
+<body>
+<nav aria-label="Pages">
+<button data-p="home" aria-current="page">Home</button>
+<button data-p="journey">Our Journey</button>
+<button data-p="todo">Things to Do</button>
+<button data-p="couch">Couch Time</button>
+<button data-p="coupons">Coupons</button>
+<button data-p="games">Games</button>
+</nav>
+<main>
+
+<section id="home" class="on">
+<div class="hero">
+<button class="moon" id="moon" aria-label="Poke the moon"></button>
+<h1 id="title">Happy October, my love</h1>
+<p class="lede">Your favorite season, and I made it a whole website. Poke the moon if you dare.</p>
+<button class="btn" id="pickBtn">Pick our next adventure</button>
+<p class="pick" id="pick" aria-live="polite"></p>
+</div>
+</section>
+
+<section id="journey">
+<h2>Our Journey</h2>
+<p class="sub">Every adventure lights up a stop on the road. Tap a stop to add the date and a photo.</p>
+<p class="sub" id="jnote"></p>
+<div id="earlier"></div>
+<div class="chap" data-theme="oct">
+<div class="flag">October 2026 &middot; Spooky</div>
+<div class="path" id="path"></div>
+<p class="tc"><button class="btn" id="addMem">Add a memory</button></p>
+</div>
+<div class="chap" data-theme="nov">
+<div class="flag locked">November 2026 &middot; mystery</div>
+<p class="sub tc">The road keeps going. We will find out together.</p>
+<div class="path" id="path-nov"></div>
+</div>
+<div class="chap" data-theme="winter">
+<div class="flag locked">Winter 2026 &middot; mystery</div>
+<p class="sub tc">Something is waiting past the first snow.</p>
+<div class="path" id="path-win"></div>
+</div>
+</section>
+
+<section id="todo">
+<h2>Things to Do</h2>
+<p class="sub">Tick them off as we go. Your progress stays on this device.</p>
+<div class="prog"><i id="bar"></i></div>
+<ul class="list" id="list"></ul>
+</section>
+
+<section id="couch">
+<h2>Couch Time</h2>
+<p class="sub">Blankets, snacks, and a screen. Pick one and press play.</p>
+<h3 class="sub2">Movies to watch</h3>
+<div class="prog"><i id="bar-m"></i></div>
+<button class="btn alt" id="pickM">Pick tonight's movie</button>
+<p class="pick" id="pm" aria-live="polite"></p>
+<ul class="list" id="list-m"></ul>
+<h3 class="sub2">Video games to play together</h3>
+<div class="prog"><i id="bar-g"></i></div>
+<button class="btn alt" id="pickG">Pick tonight's game</button>
+<p class="pick" id="pg" aria-live="polite"></p>
+<ul class="list" id="list-g"></ul>
+</section>
+
+<section id="coupons">
+<h2>Coupons</h2>
+<p class="sub">Each one is good for one use. Tap Redeem when you want to cash it in.</p>
+<div class="coupons" id="coupons"></div>
+</section>
+
+<section id="games">
+<h2>Games</h2>
+<p class="sub">Beat your own high score.</p>
+
+<div class="game">
+<h3>Ghost Catch</h3>
+<p class="sub">Tap 👻 for 1 point and 🎃 for 3. Don't touch the 🕷️, it costs 2.</p>
+<div class="hud"><span>Score <strong id="gs">0</strong></span><span>Time <strong id="gt">30</strong></span><span>Best <strong id="gb">0</strong></span><button class="btn alt" id="gstart">Start</button></div>
+<div class="holes" id="holes"></div>
+<p class="msg" id="gmsg"></p>
+</div>
+
+<div class="game">
+<h3>Midnight Match</h3>
+<p class="sub">Find all eight pairs in as few moves as you can.</p>
+<div class="hud"><span>Moves <strong id="mm">0</strong></span><span>Best <strong id="mb">-</strong></span><button class="btn alt" id="mstart">New game</button></div>
+<div class="cards" id="cards"></div>
+<p class="msg" id="mmsg"></p>
+</div>
+</section>
+
+</main>
+<dialog id="dlg">
+<h3 id="dTitle"></h3>
+<p class="sub" id="dSub"></p>
+<input id="dName" type="text" placeholder="What did we do?" maxlength="60" aria-label="What did we do?">
+<label class="fld">Date <input id="dDate" type="date"></label>
+<label class="fld" id="fFile">Photo <input id="dFile" type="file" accept="image/*"></label>
+<img id="dImg" alt="" hidden>
+<p class="msg" id="dMsg"></p>
+<div class="row"><button class="btn" id="dEdit">Edit</button><button class="btn" id="dSave">Save</button><button class="btn alt" id="dRemove">Remove</button><button class="btn alt" id="dClose">Close</button></div>
+</dialog>
+<dialog id="askDlg">
+<h3 id="aT"></h3>
+<p class="sub" id="aP"></p>
+<input id="aIn" type="password" autocomplete="off" aria-label="Password">
+<div class="row"><button class="btn" id="aOk">OK</button><button class="btn alt" id="aNo">Cancel</button></div>
+</dialog>
+<footer>Made with love, a little fog, and way too many pumpkins.</footer>
+
+<script>
+/* Core: her name, saved settings, tabs, bats on the moon */
+
+// Change this to her name or a pet name:
+var HER = "my love";
+document.getElementById('title').textContent = "Happy October, " + HER;
+
+var store = {
+  get: function(k, d){ try{ var v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set: function(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); return true; }catch(e){ return false; } }
+};
+var $ = function(id){ return document.getElementById(id); };
+
+/* Pages */
+document.querySelectorAll('nav button').forEach(function(b){
+  b.onclick = function(){
+    document.querySelectorAll('nav button').forEach(function(x){ x.removeAttribute('aria-current'); });
+    b.setAttribute('aria-current','page');
+    document.querySelectorAll('section').forEach(function(s){ s.classList.toggle('on', s.id === b.dataset.p); });
+    window.scrollTo(0,0);
+    if(b.dataset.p === 'journey') renderPath();
+    syncTheme();
+  };
+});
+
+/* Bats */
+$('moon').onclick = function(){
+  for(var i=0;i<6;i++){
+    var b = document.createElement('div');
+    b.className = 'bat'; b.textContent = '🦇';
+    b.style.top = (10 + Math.random()*60) + 'vh';
+    b.style.animationDelay = (i*0.25) + 's';
+    document.body.appendChild(b);
+    setTimeout(function(el){ el.remove(); }.bind(null,b), 6500);
+  }
+};
+
+</script>
+<script>
+/* The list of October activities, plus the Pick our next adventure button */
+
+/* Things to do */
+var things = [
+ ["Visit a pumpkin patch","Pick the lumpiest, weirdest one"],
+ ["Carve pumpkins","Bonus points for a couples design"],
+ ["Get lost in a corn maze","Loser buys the cider"],
+ ["Go through a haunted house","Holding hands is mandatory"],
+ ["Spooky movie night","Hocus Pocus, Practical Magic, Coraline, Beetlejuice"],
+ ["Bake pumpkin bread","Eat it warm, no sharing"],
+ ["Tell ghost stories by flashlight","One true one, one made up, guess which"],
+ ["Thrift store costume hunt","Matching costumes optional but encouraged"],
+ ["Bonfire with s'mores","Blankets and hot chocolate"],
+ ["Drive to see the fall leaves","Pick a road and just go"],
+ ["Candlelit dinner at home","Lights off, candles on"],
+ ["Decorate the place for Halloween","Fake cobwebs everywhere"],
+ ["Visit a cemetery at golden hour","Quietly, and with respect"],
+ ["Make a spooky playlist","Each of us adds ten songs"],
+ ["Trick-or-treat or hand out candy","Taste test the good stuff first"]
+];
+
+$('pickBtn').onclick = function(){
+  var t = things[Math.floor(Math.random()*things.length)];
+  $('pick').textContent = t[0] + ". " + t[1] + ".";
+};
+
+</script>
+<script>
+/* GitHub-backed story access, dialogs, and write authentication. */
+
+/*
+  GitHub Pages is static, so the site cannot run its own database.
+  Memories are stored in data/memories.json and photos in data/images/ in
+  the GitHub repository. The site reads them publicly and uses a GitHub
+  fine-grained token only when somebody wants to edit the story.
+*/
+var mem = {}, extras = [], dlgId = null, dlgTitle = '', pending = '';
+var GH = {
+  branch: 'main',
+  dataPath: 'data/memories.json',
+  imageDir: 'data/images',
+  repo: ''
+};
+var ghToken = sessionStorage.getItem('october_gh_token') || '';
+
+function fmt(d){
+  if(!d) return '';
+  return new Date(d + 'T12:00:00').toLocaleDateString(undefined, {month:'short', day:'numeric', year:'numeric'});
+}
+function today(){
+  var d = new Date(), m = d.getMonth()+1, day = d.getDate();
+  return d.getFullYear() + '-' + (m<10?'0':'') + m + '-' + (day<10?'0':'') + day;
+}
+function allStops(){
+  var arr = things.map(function(t,i){ return {id:'a'+i, title:t[0], sub:t[1]}; });
+  extras.slice().sort(function(x,y){ return (mem[x.id].date||'').localeCompare(mem[y.id].date||''); })
+    .forEach(function(e){ arr.push({id:e.id, title:e.title, sub:'Bonus memory', extra:true}); });
+  return arr;
+}
+
+function ask(title, text, withInput, okLabel){
+  return new Promise(function(res){
+    var d = $('askDlg'), inp = $('aIn');
+    $('aT').textContent = title; $('aP').textContent = text;
+    inp.hidden = !withInput; inp.value = '';
+    inp.type = withInput ? 'password' : 'text';
+    $('aOk').textContent = okLabel || 'OK';
+    $('aOk').onclick = function(){ d.close(); res(withInput ? inp.value : true); };
+    $('aNo').onclick = function(){ d.close(); res(null); };
+    d.oncancel = function(){ res(null); };
+    d.showModal(); if(withInput) inp.focus();
+  });
+}
+
+function getRepo(){
+  if(GH.repo) return GH.repo;
+  var host = location.hostname;
+  if(host.endsWith('.github.io')){
+    var owner = host.split('.')[0];
+    var parts = location.pathname.split('/').filter(Boolean);
+    GH.repo = owner + '/' + (parts[0] || (owner + '.github.io'));
+    return GH.repo;
+  }
+  return '';
+}
+function repoParts(){
+  var r = getRepo().split('/');
+  return r.length === 2 ? {owner:r[0], repo:r[1]} : null;
+}
+function apiHeaders(){
+  var h = {'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2026-03-10'};
+  if(ghToken) h.Authorization = 'Bearer ' + ghToken;
+  return h;
+}
+function apiUrl(path){
+  var p = repoParts();
+  return p ? 'https://api.github.com/repos/' + encodeURIComponent(p.owner) + '/' + encodeURIComponent(p.repo) + '/contents/' + path.split('/').map(encodeURIComponent).join('/') : '';
+}
+function b64ToText(s){
+  return decodeURIComponent(escape(atob(s.replace(/\s/g,''))));
+}
+function textToB64(s){
+  return btoa(unescape(encodeURIComponent(s)));
+}
+function dataUrlToB64(s){ return s ? s.split(',')[1] : ''; }
+
+function readMemories(){
+  var p = repoParts();
+  if(!p){ mem={}; extras=[]; refresh(); return Promise.resolve(); }
+  var url = 'https://raw.githubusercontent.com/' + encodeURIComponent(p.owner) + '/' + encodeURIComponent(p.repo) + '/' + encodeURIComponent(GH.branch) + '/' + GH.dataPath.split('/').map(encodeURIComponent).join('/');
+  return fetch(url + '?v=' + Date.now()).then(function(r){
+    if(r.status === 404) return {};
+    if(!r.ok) throw new Error('Could not load memories');
+    return r.json();
+  }).then(function(data){
+    mem = data.memories || {};
+    extras = [];
+    Object.keys(mem).forEach(function(id){ if(mem[id].extra) extras.push({id:id,title:mem[id].title || 'Memory'}); });
+    refresh();
+  }).catch(function(){
+    mem={}; extras=[]; refresh();
+  });
+}
+
+function githubFile(path){
+  return fetch(apiUrl(path), {headers:apiHeaders()}).then(function(r){
+    if(r.status === 404) return null;
+    if(!r.ok) return r.json().catch(function(){return {};}).then(function(e){ throw new Error(e.message || 'GitHub request failed ('+r.status+')'); });
+    return r.json();
+  });
+}
+function githubPut(path, contentB64, message){
+  return githubFile(path).then(function(existing){
+    var body = {message:message, content:contentB64, branch:GH.branch};
+    if(existing && existing.sha) body.sha = existing.sha;
+    return fetch(apiUrl(path), {method:'PUT', headers:Object.assign({'Content-Type':'application/json'},apiHeaders()), body:JSON.stringify(body)})
+      .then(function(r){ return r.json().then(function(x){ if(!r.ok) throw new Error(x.message || 'GitHub could not save the file.'); return x; }); });
+  });
+}
+function githubDelete(path, message){
+  return githubFile(path).then(function(existing){
+    if(!existing) return;
+    return fetch(apiUrl(path), {method:'DELETE', headers:Object.assign({'Content-Type':'application/json'},apiHeaders()), body:JSON.stringify({message:message,sha:existing.sha,branch:GH.branch})})
+      .then(function(r){ return r.json().then(function(x){ if(!r.ok) throw new Error(x.message || 'GitHub could not delete the file.'); return x; }); });
+  });
+}
+
+function saveMemoriesFile(message){
+  return githubPut(GH.dataPath, textToB64(JSON.stringify({memories:mem}, null, 2) + '\n'), message);
+}
+function imagePath(id){ return GH.imageDir + '/' + id.replace(/[^a-zA-Z0-9_-]/g,'_') + '.jpg'; }
+
+function signInGithub(){
+  if(!getRepo()){
+    return ask('GitHub repository','Enter your repository as owner/repository.',true,'Continue').then(function(repo){
+      if(!repo) return false;
+      GH.repo = repo.trim().replace(/^https?:\/\/github\.com\//,'').replace(/\.git$/,'').replace(/\/$/,'');
+      return signInGithub();
+    });
+  }
+  return ask('GitHub sign in','Paste a fine-grained GitHub token with Contents: Read and write access to this repository. It is kept only for this browser session.',true,'Sign in').then(function(token){
+    if(!token) return false;
+    ghToken = token.trim();
+    var p = repoParts();
+    return fetch('https://api.github.com/repos/' + encodeURIComponent(p.owner) + '/' + encodeURIComponent(p.repo), {headers:apiHeaders()}).then(function(r){
+      if(!r.ok) throw new Error('GitHub authentication failed');
+      sessionStorage.setItem('october_gh_token', ghToken);
+      return true;
+    }).catch(function(){
+      ghToken = '';
+      return ask('GitHub sign in failed','The token could not access this repository. Check the repository and token permissions.',false,'OK').then(function(){return false;});
+    });
+  });
+}
+function requireUnlock(){
+  if(ghToken) return Promise.resolve(true);
+  return signInGithub();
+}
+function signOutGithub(){
+  ghToken = '';
+  sessionStorage.removeItem('october_gh_token');
+}
+
+/* Load the public story as soon as the page opens. */
+readMemories();
+
+</script>
+<script>
+/* Our Journey: checklist, the winding road, mystery chapters, and chapter colors */
+
+function paintList(){
+  var ul = $('list'); ul.innerHTML = '';
+  things.forEach(function(t,i){
+    var id = 'a'+i;
+    var li = document.createElement('li');
+    var lab = document.createElement('label');
+    var cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !!mem[id];
+    cb.onchange = function(){ cb.checked = !!mem[id]; openMem(id, t[0], t[1], false); };
+    var sp = document.createElement('span');
+    sp.innerHTML = '<b></b><small></small>';
+    sp.querySelector('b').textContent = t[0];
+    sp.querySelector('small').textContent = mem[id] && mem[id].date ? 'Done ' + fmt(mem[id].date) : t[1];
+    lab.appendChild(cb); lab.appendChild(sp); li.appendChild(lab); ul.appendChild(li);
+  });
+  var n = 0; things.forEach(function(t,i){ if(mem['a'+i]) n++; });
+  $('bar').style.width = (n / things.length * 100) + '%';
+}
+function refresh(){
+  $('jnote').textContent = '';
+  paintList(); renderPath();
+}
+
+/* Journey road */
+var earlier = []; // add {name:'Summer 2026', url:'https://...'} for older versions of the site
+var novStops = ["It smells amazing.","Bring a blanket.","We will be thankful.","A surprise."];
+var winStops = ["It is cold outside.","Lights and sparkle.","Warm drinks required.","A new year begins."];
+function mystery(clues, chapter){
+  return clues.map(function(c,i){ return {id:'m'+i, title:'???', sub:'Clue: ' + c, mystery:true, chapter:chapter}; });
+}
+function renderPath(){
+  var el = $('earlier'); el.innerHTML = '';
+  earlier.forEach(function(e){
+    var a = document.createElement('a'); a.href = e.url; a.textContent = 'Earlier: ' + e.name; el.appendChild(a);
+  });
+  drawRoad($('path'), allStops());
+  drawRoad($('path-nov'), mystery(novStops, 'November'));
+  drawRoad($('path-win'), mystery(winStops, 'winter'));
+  syncTheme();
+}
+function drawRoad(box, stops){
+  box.innerHTML = '';
+  var w = box.parentNode.clientWidth; if(!w) return;
+  var n = stops.length, gap = 128;
+  var H = n*gap + 40; box.style.height = H + 'px'; box.style.width = w + 'px';
+  var amp = Math.min(w*0.26, 100), pts = [];
+  stops.forEach(function(st,i){ pts.push({x: w/2 + Math.sin(i*1.15)*amp, y: 60 + i*gap}); });
+  var NS = 'http://www.w3.org/2000/svg';
+  var svg = document.createElementNS(NS,'svg'); svg.setAttribute('width', w); svg.setAttribute('height', H);
+  for(var i=1;i<n;i++){
+    var p0 = pts[i-1], p1 = pts[i];
+    var lit = !stops[i].mystery && mem[stops[i-1].id] && mem[stops[i].id];
+    var d = 'M'+p0.x+' '+p0.y+' C'+p0.x+' '+(p0.y+gap/2)+' '+p1.x+' '+(p1.y-gap/2)+' '+p1.x+' '+p1.y;
+    var road = document.createElementNS(NS,'path'); road.setAttribute('d', d); road.setAttribute('fill','none');
+    road.style.stroke = 'var(--road)'; road.setAttribute('stroke-width','24'); road.setAttribute('stroke-linecap','round');
+    var dash = document.createElementNS(NS,'path'); dash.setAttribute('d', d); dash.setAttribute('fill','none');
+    dash.style.stroke = lit ? 'var(--candle)' : 'var(--fog)'; dash.setAttribute('stroke-width','3'); dash.setAttribute('stroke-dasharray','2 9'); dash.setAttribute('stroke-linecap','round');
+    svg.appendChild(road); svg.appendChild(dash);
+  }
+  box.appendChild(svg);
+  stops.forEach(function(st,i){
+    var m = st.mystery ? null : mem[st.id], pt = pts[i];
+    var b = document.createElement('button');
+    b.className = 'stop' + (m ? ' done' : '') + (m && !m.photo ? ' nophoto' : '') + (st.mystery ? ' mys' : '');
+    b.style.left = (pt.x-32)+'px'; b.style.top = (pt.y-32)+'px';
+    b.setAttribute('aria-label', st.mystery ? 'Mystery stop' : st.title + (m ? ', done' : ', not done yet'));
+    if(m && m.photo) b.style.backgroundImage = 'url("' + m.photo + '")'; else b.textContent = st.mystery ? '?' : (m ? '\u2713' : (i+1));
+    b.onclick = function(){
+      if(st.mystery) ask('Mystery stop', st.sub + ' This one stays hidden until ' + st.chapter + '.', false, 'OK');
+      else openMem(st.id, st.title, st.sub, !!st.extra);
+    };
+    var lab = document.createElement('div');
+    lab.className = 'slab' + (m ? '' : ' dim');
+    lab.innerHTML = '<b></b><small></small>';
+    lab.querySelector('b').textContent = st.title;
+    lab.querySelector('small').textContent = st.mystery ? 'Unlocks in ' + st.chapter : (m ? fmt(m.date) : '');
+    lab.style.top = (pt.y-20)+'px';
+    if(pt.x < w/2){ lab.style.left = (pt.x+42)+'px'; lab.style.width = (w-pt.x-50)+'px'; }
+    else { lab.style.left = '8px'; lab.style.width = (pt.x-50)+'px'; lab.style.textAlign = 'right'; }
+    box.appendChild(lab); box.appendChild(b);
+  });
+}
+/* Page colors follow whichever chapter is on screen */
+var chapTick = false;
+function syncTheme(){
+  chapTick = false;
+  var root = document.documentElement;
+  if(!$('journey').classList.contains('on')){ root.removeAttribute('data-theme'); return; }
+  var cur = 'oct', line = window.innerHeight * 0.45;
+  document.querySelectorAll('.chap').forEach(function(c){ if(c.getBoundingClientRect().top <= line) cur = c.dataset.theme; });
+  if(cur === 'oct') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', cur);
+}
+window.addEventListener('scroll', function(){ if(!chapTick){ chapTick = true; requestAnimationFrame(syncTheme); } }, {passive:true});
+window.addEventListener('resize', function(){ if($('journey').classList.contains('on')) renderPath(); });
+
+</script>
+<script>
+/* Adding, viewing and editing memories stored in the GitHub repository. */
+
+function setEdit(on){
+  var m = mem[dlgId];
+  $('dDate').disabled = !on; $('dName').disabled = !on;
+  $('fFile').hidden = !on; $('dSave').hidden = !on;
+  $('dRemove').hidden = !(on && m); $('dEdit').hidden = on;
+  $('dSub').textContent = on ? (m ? 'Update the date or photo.' : 'We did this one! Add the date and a photo.') : (m ? 'A memory we made together.' : '');
+}
+function showMem(id, title, isExtra, edit){
+  dlgId = id; dlgTitle = title; pending = '';
+  var m = mem[id];
+  $('dTitle').textContent = isExtra && !m ? 'Add a memory' : title;
+  $('dName').hidden = !isExtra; $('dName').value = isExtra ? (m ? m.title : title) : '';
+  $('dDate').value = m && m.date ? m.date : today();
+  $('dFile').value = ''; $('dMsg').textContent = '';
+  var im = $('dImg');
+  if(m && m.photo){ im.src = m.photo; im.hidden = false; } else { im.hidden = true; im.removeAttribute('src'); }
+  setEdit(edit);
+  $('dlg').showModal();
+}
+function openMem(id, title, sub, isExtra){
+  if(mem[id]) return showMem(id, title || mem[id].title, isExtra, false);
+  requireUnlock().then(function(ok){ if(ok) showMem(id, title, isExtra, true); });
+}
+$('addMem').onclick = function(){
+  requireUnlock().then(function(ok){ if(ok) showMem('x'+Date.now(), '', true, true); });
+};
+$('dEdit').onclick = function(){ requireUnlock().then(function(ok){ if(ok) setEdit(true); }); };
+$('dClose').onclick = function(){ $('dlg').close(); };
+$('dFile').onchange = function(){
+  var f = this.files[0]; if(!f) return;
+  var rd = new FileReader();
+  rd.onload = function(){
+    var img = new Image();
+    img.onload = function(){
+      var dim = 800, q = 0.72, out = '';
+      for(var t=0; t<8; t++){
+        var sc = Math.min(1, dim / Math.max(img.width, img.height));
+        var cv = document.createElement('canvas'); cv.width = Math.round(img.width*sc); cv.height = Math.round(img.height*sc);
+        cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+        out = cv.toDataURL('image/jpeg', q);
+        if(out.length < 190000) break;
+        q -= 0.07; if(q < 0.4){ q = 0.6; dim = Math.round(dim*0.8); }
+      }
+      pending = out; $('dImg').src = out; $('dImg').hidden = false;
+    };
+    img.onerror = function(){ $('dMsg').textContent = 'That file could not be read as a photo.'; };
+    img.src = rd.result;
+  };
+  rd.readAsDataURL(f);
+};
+
+$('dSave').onclick = function(){
+  var isExtra = !$('dName').hidden, name = $('dName').value.trim();
+  if(isExtra && !name){ $('dMsg').textContent = 'Give this memory a name first.'; return; }
+  var old = mem[dlgId];
+  var body = {
+    title: isExtra ? name : dlgTitle,
+    extra: isExtra,
+    date: $('dDate').value || today(),
+    photo: old ? (old.photo || '') : ''
+  };
+  $('dSave').disabled = true; $('dMsg').textContent = 'Saving to GitHub...';
+
+  var newImage = pending ? imagePath(dlgId) : null;
+  var oldImage = old && old.imagePath;
+  if(newImage){
+    body.imagePath = newImage;
+    body.photo = 'https://raw.githubusercontent.com/' + repoParts().owner + '/' + repoParts().repo + '/' + GH.branch + '/' + newImage;
+  } else if(old){
+    body.imagePath = old.imagePath || '';
+  }
+
+  var imagePromise = pending ? githubPut(newImage, dataUrlToB64(pending), 'Update memory photo: ' + body.title) : Promise.resolve();
+  imagePromise.then(function(){
+    mem[dlgId] = body;
+    extras = Object.keys(mem).filter(function(id){ return mem[id].extra; }).map(function(id){ return {id:id,title:mem[id].title || 'Memory'}; });
+    return saveMemoriesFile('Update memory: ' + body.title);
+  }).then(function(){
+    $('dSave').disabled = false; $('dlg').close(); refresh();
+  }).catch(function(e){
+    $('dSave').disabled = false;
+    $('dMsg').textContent = 'Could not save to GitHub. ' + (e.message || 'Check your token and try again.');
+  });
+};
+
+$('dRemove').onclick = function(){
+  ask('Remove memory','Remove this memory and its photo from the website?',false,'Remove').then(function(ok){
+    if(!ok) return;
+    var old = mem[dlgId];
+    $('dRemove').disabled = true; $('dMsg').textContent = 'Removing from GitHub...';
+    delete mem[dlgId];
+    var imagePromise = old && old.imagePath ? githubDelete(old.imagePath, 'Remove memory photo: ' + (old.title || 'Memory')) : Promise.resolve();
+    imagePromise.then(function(){ return saveMemoriesFile('Remove memory: ' + (old && old.title || 'Memory')); })
+      .then(function(){ $('dRemove').disabled = false; $('dlg').close(); refresh(); })
+      .catch(function(e){
+        if(old) mem[dlgId] = old;
+        $('dRemove').disabled = false;
+        $('dMsg').textContent = 'Could not remove. ' + (e.message || 'Try again.');
+      });
+  });
+};
+
+$('dlg').addEventListener('close', refresh);
+refresh();
+
+</script>
+<script>
+/* Couch Time: movie and video game lists */
+
+/* Couch Time lists */
+var movies = [
+ ["Hocus Pocus","Cozy and silly, the October classic"],
+ ["Practical Magic","Witches, sisters, and a midnight margarita"],
+ ["Coraline","Creepy and beautiful"],
+ ["Beetlejuice","Say it three times"],
+ ["Corpse Bride","Gothic and sweet"],
+ ["The Nightmare Before Christmas","Counts as both holidays"],
+ ["Halloweentown","Pure nostalgia"],
+ ["Halloween (1978)","The original, lights off"],
+ ["Scream","Scary and funny at once"],
+ ["Ghostbusters","Comfort-food ghosts"]
+];
+var vgames = [
+ ["Luigi's Mansion 3","Spooky but never too scary"],
+ ["It Takes Two","Co-op, made for couples"],
+ ["Phasmophobia","Hunt ghosts together, scream together"],
+ ["Little Nightmares","Creepy puzzle-platformer"],
+ ["Cult of the Lamb","Cute cult, dark humor"],
+ ["Don't Starve Together","Spooky survival, best with two"],
+ ["Stardew Valley","Fall season, with the Spirit's Eve festival"],
+ ["Overcooked 2","Chaotic co-op cooking, test your relationship"]
+];
+function mkList(ulId, barId, arr, key){
+  var st = store.get(key, {});
+  var ul = $(ulId); ul.innerHTML = '';
+  function bar(){
+    var n = 0; for(var k in st){ if(st[k]) n++; }
+    $(barId).style.width = (n / arr.length * 100) + '%';
+  }
+  arr.forEach(function(t,i){
+    var li = document.createElement('li');
+    var lab = document.createElement('label');
+    var cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !!st[i];
+    cb.onchange = function(){ st[i] = cb.checked; store.set(key, st); bar(); };
+    var sp = document.createElement('span');
+    sp.innerHTML = '<b></b><small></small>';
+    sp.querySelector('b').textContent = t[0];
+    sp.querySelector('small').textContent = t[1];
+    lab.appendChild(cb); lab.appendChild(sp); li.appendChild(lab); ul.appendChild(li);
+  });
+  bar();
+}
+mkList('list-m','bar-m',movies,'movies');
+mkList('list-g','bar-g',vgames,'vgames');
+$('pickM').onclick = function(){ $('pm').textContent = movies[Math.floor(Math.random()*movies.length)][0]; };
+$('pickG').onclick = function(){ $('pg').textContent = vgames[Math.floor(Math.random()*vgames.length)][0]; };
+
+</script>
+<script>
+/* Coupons: redeem and undo */
+
+/* Coupons. Add "img" with a picture of your coupon to show it instead of the text ticket. */
+var coupons = [
+ {t:"One cozy movie night",d:"You pick the movie, I make the snacks.",img:""},
+ {t:"One back massage",d:"As long as you want. Timer is on your side.",img:""},
+ {t:"Breakfast in bed",d:"Pumpkin pancakes included.",img:""},
+ {t:"One free pick",d:"You choose the date night, no vetoes.",img:""}
+];
+var used = store.get('coupons', {});
+function paintCoupons(){
+  var box = $('coupons'); box.innerHTML = '';
+  coupons.forEach(function(c,i){
+    var el = document.createElement('div');
+    el.className = 'coupon' + (used[i] ? ' used' : '');
+    if(c.img){
+      var im = document.createElement('img'); im.src = c.img; im.alt = c.t; el.appendChild(im);
+    } else {
+      var h = document.createElement('h3'); h.textContent = c.t;
+      var p = document.createElement('p'); p.textContent = c.d;
+      el.appendChild(h); el.appendChild(p);
+    }
+    var b = document.createElement('button');
+    b.className = 'btn'; b.textContent = used[i] ? 'Redeemed' : 'Redeem'; b.disabled = !!used[i];
+    b.onclick = function(){
+      ask('Redeem coupon','Redeem "' + c.t + '"? You can only use it once.',false,'Redeem').then(function(ok){
+        if(!ok) return;
+        used[i] = true; store.set('coupons', used); paintCoupons();
+      });
+    };
+    el.appendChild(b);
+    if(used[i]){
+      var u = document.createElement('button');
+      u.className = 'btn alt'; u.textContent = 'Undo'; u.style.marginLeft = '8px';
+      u.onclick = function(){
+        requireUnlock().then(function(ok){
+          if(!ok) return;
+          delete used[i]; store.set('coupons', used); paintCoupons();
+        });
+      };
+      el.appendChild(u);
+    }
+    box.appendChild(el);
+  });
+}
+paintCoupons();
+
+</script>
+<script>
+/* Games: Ghost Catch and Midnight Match */
+
+/* Ghost Catch */
+var gScore=0, gTime=30, gTimer=null, gSpawn=null, gOn=false;
+var holes = [];
+for(var i=0;i<9;i++){
+  (function(){
+    var h = document.createElement('button');
+    h.className = 'hole'; h.setAttribute('aria-label','hole');
+    h.onclick = function(){
+      if(!gOn || !h.textContent) return;
+      var e = h.textContent;
+      gScore += e === '👻' ? 1 : e === '🎃' ? 3 : -2;
+      if(gScore < 0) gScore = 0;
+      h.textContent = ''; $('gs').textContent = gScore;
+    };
+    $('holes').appendChild(h); holes.push(h);
+  })();
+}
+$('gb').textContent = store.get('gbest', 0);
+function popOne(){
+  var h = holes[Math.floor(Math.random()*9)];
+  var r = Math.random();
+  h.textContent = r < .12 ? '🎃' : r < .38 ? '🕷️' : '👻';
+  setTimeout(function(){ if(h) h.textContent = ''; }, 800);
+}
+function endGhost(){
+  gOn = false; clearInterval(gTimer); clearInterval(gSpawn);
+  holes.forEach(function(h){ h.textContent = ''; });
+  var best = store.get('gbest', 0);
+  if(gScore > best){ store.set('gbest', gScore); $('gb').textContent = gScore; $('gmsg').textContent = 'New high score: ' + gScore + '! The ghosts are impressed.'; }
+  else $('gmsg').textContent = 'Final score: ' + gScore + '. The ghosts survive another night.';
+  $('gstart').textContent = 'Play again';
+}
+$('gstart').onclick = function(){
+  if(gOn) return;
+  gScore = 0; gTime = 30; gOn = true;
+  $('gs').textContent = 0; $('gt').textContent = 30; $('gmsg').textContent = '';
+  gSpawn = setInterval(popOne, 550);
+  gTimer = setInterval(function(){
+    gTime--; $('gt').textContent = gTime;
+    if(gTime <= 0) endGhost();
+  }, 1000);
+};
+
+/* Midnight Match */
+var faces = ['👻','🎃','🦇','🕷️','💀','🕯️','🧙‍♀️','🍎'];
+var first=null, lock=false, moves=0, found=0;
+$('mb').textContent = store.get('mbest', '-');
+function newMatch(){
+  var deck = faces.concat(faces).sort(function(){ return Math.random() - .5; });
+  var box = $('cards'); box.innerHTML = '';
+  first = null; lock = false; moves = 0; found = 0;
+  $('mm').textContent = 0; $('mmsg').textContent = '';
+  deck.forEach(function(f){
+    var c = document.createElement('button');
+    c.className = 'card'; c.dataset.f = f; c.setAttribute('aria-label','card');
+    c.onclick = function(){
+      if(lock || c.classList.contains('up') || c.classList.contains('done')) return;
+      c.classList.add('up'); c.textContent = f;
+      if(!first){ first = c; return; }
+      moves++; $('mm').textContent = moves;
+      var a = first; first = null;
+      if(a.dataset.f === f){
+        a.classList.replace('up','done'); c.classList.replace('up','done'); found++;
+        if(found === 8) win();
+      } else {
+        lock = true;
+        setTimeout(function(){
+          a.classList.remove('up'); c.classList.remove('up');
+          a.textContent = ''; c.textContent = ''; lock = false;
+        }, 750);
+      }
+    };
+    box.appendChild(c);
+  });
+}
+function win(){
+  var best = store.get('mbest', null);
+  if(best === null || moves < best){ store.set('mbest', moves); $('mb').textContent = moves; $('mmsg').textContent = 'All pairs found in ' + moves + ' moves. New best!'; }
+  else $('mmsg').textContent = 'All pairs found in ' + moves + ' moves. Can you beat ' + best + '?';
+}
+$('mstart').onclick = newMatch;
+newMatch();
+
+</script>
+</body>
+</html>
