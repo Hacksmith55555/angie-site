@@ -24,9 +24,10 @@ function setEdit(on){
           : '');
 }
 
-function showMem(id, title, isExtra, edit){
+function showMem(id, title, isExtra, edit, season){
 
   dlgId = id;
+  dlgSeason = season || 'oct';
   dlgTitle = title;
   pending = '';
 
@@ -63,31 +64,16 @@ function showMem(id, title, isExtra, edit){
   $('dlg').showModal();
 }
 
-function openMem(id, title, sub, isExtra){
+function openMem(id, title, sub, isExtra, season){
 
   if(mem[id])
-    return showMem(id, title, isExtra, false);
+    return showMem(id, title, isExtra, false, season);
 
   requireUnlock().then(function(ok){
     if(ok)
-      showMem(id, title, isExtra, true);
+      showMem(id, title, isExtra, true, season);
   });
 }
-
-$('addMem').onclick = function(){
-
-  requireUnlock().then(function(ok){
-
-    if(ok)
-      showMem(
-        'x'+Date.now(),
-        '',
-        true,
-        true
-      );
-
-  });
-};
 
 $('dEdit').onclick = function(){
 
@@ -209,6 +195,7 @@ $('dSave').onclick = function(){
     id:dlgId,
     title:isExtra ? name : dlgTitle,
     extra:isExtra,
+    season:dlgSeason,
     date:$('dDate').value || today(),
     photo:
       pending ||
@@ -218,7 +205,11 @@ $('dSave').onclick = function(){
   $('dSave').disabled = true;
   $('dMsg').textContent = 'Saving...';
 
-  fetch('/api/memories', {
+  fetch(
+    mem[dlgId]
+      ? '/api/memories/' + encodeURIComponent(dlgId)
+      : '/api/memories',
+  {
     method: mem[dlgId] ? 'PUT' : 'POST',
     credentials:'same-origin',
     headers:{
@@ -264,7 +255,8 @@ $('dSave').onclick = function(){
       if(!found){
         extras.push({
           id:dlgId,
-          title:body.title
+          title:body.title,
+          season:dlgSeason
         });
       } else {
         found.title = body.title;
@@ -373,8 +365,7 @@ function loadMemories(){
     mem = {};
     extras = [];
 
-    if(!Array.isArray(list))
-      list = [];
+    list = Object.values(list || {});
 
     list.forEach(function(v){
 
@@ -392,7 +383,8 @@ function loadMemories(){
 
         extras.push({
           id:id,
-          title:v.title || 'Memory'
+          title:v.title || 'Memory',
+          season:v.season || 'oct'
         });
 
       }

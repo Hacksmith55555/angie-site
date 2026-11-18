@@ -2,7 +2,6 @@
 
 // Change this to her name or a pet name:
 var HER = "my love";
-document.getElementById('title').textContent = "Happy October, " + HER;
 
 var store = {
   get: function(k, d){ try{ var v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); }catch(e){ return d; } },
@@ -22,11 +21,16 @@ document.querySelectorAll('nav button').forEach(function(b){
   };
 });
 
+const customEmojis = {
+    ':bats': 'https://cdn-icons-png.flaticon.com/128/12547/12547013.png'
+
+};
+
 /* Bats */
 $('moon').onclick = function(){
   for(var i=0;i<6;i++){
     var b = document.createElement('div');
-    b.className = 'bat'; b.textContent = '🦇';
+    b.className = 'bat'; b.textContent = ':bats';
     b.style.top = (10 + Math.random()*60) + 'vh';
     b.style.animationDelay = (i*0.25) + 's';
     document.body.appendChild(b);

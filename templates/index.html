@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>October, After Dark</title>
+<title>November, Cooling Away</title>
 <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
@@ -21,7 +21,7 @@
 <section id="home" class="on">
 <div class="hero">
 <button class="moon" id="moon" aria-label="Poke the moon"></button>
-<h1 id="title">Happy October, my love</h1>
+<h1 id="title">Happy November, my love</h1>
 <p class="lede">Your favorite season, and I made it a whole website. Poke the moon if you dare.</p>
 <button class="btn" id="pickBtn">Pick our next adventure</button>
 <p class="pick" id="pick" aria-live="polite"></p>
@@ -30,31 +30,16 @@
 
 <section id="journey">
 <h2>Our Journey</h2>
-<p class="sub">Every adventure lights up a stop on the road. Tap a stop to add the date and a photo.</p>
+<p class="sub">Every adventure lights up a stop on the road. Tap a stop to add the date and a photo. The newest season is at the top, and older ones are further down.</p>
 <p class="sub" id="jnote"></p>
+<div id="chapters"></div>
 <div id="earlier"></div>
-<div class="chap" data-theme="oct">
-<div class="flag">October 2026 &middot; Spooky</div>
-<div class="path" id="path"></div>
-<p class="tc"><button class="btn" id="addMem">Add a memory</button></p>
-</div>
-<div class="chap" data-theme="nov">
-<div class="flag locked">November 2026 &middot; mystery</div>
-<p class="sub tc">The road keeps going. We will find out together.</p>
-<div class="path" id="path-nov"></div>
-</div>
-<div class="chap" data-theme="winter">
-<div class="flag locked">Winter 2026 &middot; mystery</div>
-<p class="sub tc">Something is waiting past the first snow.</p>
-<div class="path" id="path-win"></div>
-</div>
 </section>
 
 <section id="todo">
 <h2>Things to Do</h2>
-<p class="sub">Tick them off as we go. Your progress stays on this device.</p>
-<div class="prog"><i id="bar"></i></div>
-<ul class="list" id="list"></ul>
+<p class="sub">Tick them off as we go. Newest season first.</p>
+<div id="todoLists"></div>
 </section>
 
 <section id="couch">
@@ -119,6 +104,7 @@
 <footer>Made with love, a little fog, and way too many pumpkins.</footer>
 
 <script src="{{ url_for('static', filename='js/core.js') }}"></script>
+<script src="{{ url_for('static', filename='js/seasons.js') }}"></script>
 <script src="{{ url_for('static', filename='js/activities.js') }}"></script>
 <script src="{{ url_for('static', filename='js/lock.js') }}"></script>
 <script src="{{ url_for('static', filename='js/journey.js') }}"></script>

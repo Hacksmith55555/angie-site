@@ -84,8 +84,6 @@ dialog input[type=file]{display:block;margin-top:6px;color:var(--fog);max-width:
 /* Journey chapters and their color themes */
 .chap{color:var(--moon);padding:26px 0 18px}
 .tc{text-align:center}
-[data-theme=nov]{--ink:#2b1812;--ink2:#41261c;--moon:#f3e6d6;--candle:#e8963c;--fog:#b6917c;--glow:#7a4224;--road:#5a3626;--navbg:rgba(43,24,18,.92)}
-[data-theme=winter]{--ink:#0e1d33;--ink2:#1a3150;--moon:#e8f3ff;--candle:#8fd3ff;--fog:#7fa3c9;--glow:#2a5584;--road:#2c4d77;--navbg:rgba(14,29,51,.92)}
 .stop.mys{border-style:dashed;background:var(--ink2)}
 footer{text-align:center;color:var(--fog);padding:30px 20px;font-style:italic}
 @media (prefers-reduced-motion:reduce){.bat{animation-duration:.01s}.prog i,.card{transition:none}}

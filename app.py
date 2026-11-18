@@ -57,6 +57,12 @@ def init_db():
                 updated_at TEXT NOT NULL
             )
         """)
+        cols = [r["name"] for r in db.execute("PRAGMA table_info(memories)")]
+        if "season" not in cols:
+            # Older databases: every existing memory belongs to October.
+            db.execute(
+                "ALTER TABLE memories ADD COLUMN season TEXT NOT NULL DEFAULT 'oct'"
+            )
         db.commit()
 
 
@@ -134,6 +140,7 @@ def memory_json(row):
         "extra": bool(row["extra"]),
         "date": row["date"],
         "photo": f"/uploads/{row['photo']}" if row["photo"] else "",
+        "season": row["season"] or "oct",
     }
 
 
@@ -215,6 +222,10 @@ def upsert_memory(memory_id, create=False):
     title = str(data.get("title", "")).strip()
     extra = bool(data.get("extra"))
     date = clean_date(data.get("date"))
+    season_in = "".join(
+        c for c in str(data.get("season", "")).lower()
+        if c.isalnum() or c in "-_"
+    )[:30]
 
     if not title:
         return jsonify({
@@ -226,6 +237,7 @@ def upsert_memory(memory_id, create=False):
 
     photo = ""
     old_photo = ""
+    old_season = ""
     existing = False
 
     with db_conn() as db:
@@ -244,6 +256,7 @@ def upsert_memory(memory_id, create=False):
 
             existing = True
             old_photo = old["photo"] or ""
+            old_season = old["season"] or ""
 
         elif memory_id and create:
             already = db.execute(
@@ -277,6 +290,8 @@ def upsert_memory(memory_id, create=False):
         else:
             photo = old_photo
 
+        season = season_in or old_season or "oct"
+
         if existing and old_photo and photo != old_photo:
             delete_photo(old_photo)
 
@@ -287,6 +302,7 @@ def upsert_memory(memory_id, create=False):
                     extra=?,
                     date=?,
                     photo=?,
+                    season=?,
                     updated_at=?
                 WHERE id=?
             """, (
@@ -294,6 +310,7 @@ def upsert_memory(memory_id, create=False):
                 int(extra),
                 date,
                 photo,
+                season,
                 now,
                 memory_id
             ))
@@ -306,16 +323,18 @@ def upsert_memory(memory_id, create=False):
                     extra,
                     date,
                     photo,
+                    season,
                     created_at,
                     updated_at
                 )
-                VALUES(?,?,?,?,?,?,?)
+                VALUES(?,?,?,?,?,?,?,?)
             """, (
                 memory_id,
                 title,
                 int(extra),
                 date,
                 photo,
+                season,
                 now,
                 now
             ))
@@ -364,9 +383,8 @@ def remove_memory(memory_id):
 
 
 @app.route("/uploads/<path:filename>")
-@login_required
 def uploads(filename):
-    # Photos are private to logged-in sessions.
+    # Photos are public so anyone with the link can see them.
     return send_from_directory(
         UPLOAD_DIR,
         Path(filename).name

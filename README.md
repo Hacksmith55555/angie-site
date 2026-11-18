@@ -52,12 +52,16 @@ gunicorn app:app
 
 ## Memory/photo access
 
-The public site can load memory metadata, but uploaded photos are served only after the Flask session has been unlocked with `SITE_PASSWORD`. The same password is used for adding, editing, and removing memories.
+The public site can load memory metadata, and uploaded photos are public to anyone with the link. `SITE_PASSWORD` is required for adding, editing, and removing memories.
 
-Photos are stored outside `static/` on the persistent disk, so they are not ordinary public static files.
+Photos are stored outside `static/` on the persistent disk, so they are not committed to GitHub.
 
 ## Important
 
 Only files written under the persistent disk mount path survive Render deploys/restarts. Keep `DATA_DIR=/var/data` when the disk is mounted there.
 
 The persistent disk is storage, not a backup system. For important photos, keep a separate backup as well.
+
+## Adding or unlocking a season
+
+Everything lives in `static/js/seasons.js`. Copy the "winter" block to add a coming-soon season. When a season arrives, change `clues:[...]` to `stops:[...]` and add a `greeting`. The newest season shows at the top of Our Journey, with coming-soon seasons above it and older ones below. Existing databases are upgraded automatically (old memories become October).

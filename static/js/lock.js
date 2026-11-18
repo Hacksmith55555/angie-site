@@ -13,6 +13,7 @@ var mem = {};
 var extras = [];
 
 var dlgId = null;
+var dlgSeason = 'oct';
 var dlgTitle = '';
 var pending = '';
 var unl = '';
@@ -40,17 +41,14 @@ function today(){
     '-' + (day<10?'0':'') + day;
 }
 
-function allStops(){
-  var arr = things.map(function(t,i){
-    return {
-      id:'a'+i,
-      title:t[0],
-      sub:t[1]
-    };
-  });
+/* Every stop for one season: its planned list plus any bonus memories */
+function allStops(s){
+  var arr = seasonStops(s);
 
   extras
-    .slice()
+    .filter(function(e){
+      return (e.season || 'oct') === s.id && mem[e.id];
+    })
     .sort(function(x,y){
       return (mem[x.id].date||'')
         .localeCompare(mem[y.id].date||'');
@@ -60,7 +58,8 @@ function allStops(){
         id:e.id,
         title:e.title,
         sub:'Bonus memory',
-        extra:true
+        extra:true,
+        season:s.id
       });
     });
 
@@ -126,7 +125,7 @@ function requireUnlock(){
   })
   .then(function(status){
 
-    if(status && status.authenticated){
+    if(status && status.unlocked){
       unl = 'flask-session';
       return true;
     }

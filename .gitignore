@@ -1,6 +1,0 @@
-__pycache__/
-*.py[cod]
-.env
-data/
-static/uploads/*
-!static/uploads/.gitkeep
